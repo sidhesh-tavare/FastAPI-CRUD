@@ -106,7 +106,7 @@ class Database:
         if self.conn : self.conn.close()
 
     '''
-    Context Manager using class using dunder methods of __enetr__ and __exit__
+    Context Manager using class using dunder methods of __enetr__ and __exit__ 
     '''
 
     def __enter__(self):
