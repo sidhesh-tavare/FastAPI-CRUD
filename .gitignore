@@ -1,0 +1,30 @@
+.venv
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Type checkers & linters
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Local SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment variables & secrets
+.env
+.env.*
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
