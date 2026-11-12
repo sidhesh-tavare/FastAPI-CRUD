@@ -44,4 +44,4 @@ class ProductUpdate(BaseModel):
     price: float | None = Field(default=None, gt=0, le=10_000)
     stock: int | None = Field(default=None, ge=0)
     # warehouse: int | None = Field(default=None, ge=1, le=5)
-    status: ProductStatus | None = Field(default=None)
+    # status: ProductStatus | None = Field(default=None)
