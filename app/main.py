@@ -3,7 +3,7 @@
 from fastapi import FastAPI, HTTPException, status
 
 from schemas.models import *
-from database import Database
+from app.database.database import Database
 db = Database()
 
 app = FastAPI()
