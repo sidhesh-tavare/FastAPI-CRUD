@@ -2,7 +2,7 @@
 # Run (from the m06 folder):  fastapi dev app/main.py
 from fastapi import FastAPI, HTTPException, status
 
-from schemas.models import *
+from app.schemas.models import *
 from app.database.database import Database
 db = Database()
 
