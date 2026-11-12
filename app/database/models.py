@@ -20,3 +20,11 @@ class Product(SQLModel, table=True):
     stock: int = Field(ge=0)
     category: ProductCategory
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ProductUpdate(SQLModel):
+    name: str
+    price: float = Field(gt=0, le=10_000)
+    stock: int = Field(ge=0)
+    category: ProductCategory
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
