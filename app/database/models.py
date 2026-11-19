@@ -27,6 +27,7 @@ class ProductUpdate(SQLModel):
     price: float | None = Field(default=None, gt=0, le=10_000)
     stock: int | None = Field(default=None, ge=0)
     category: ProductCategory | None = None
+    created_at : datetime | None = None 
 
 class ProductCreate(SQLModel):
     __tablename__ = "products"
