@@ -9,6 +9,7 @@ class ProductCategory(str, Enum):
     HOME = "home"
     ACCESSORIES = "accessories"
     PERIPHERALS = "peripherals"
+    FOODS = "foods"
 
 
 class Product(SQLModel, table=True):
@@ -22,9 +23,17 @@ class Product(SQLModel, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ProductUpdate(SQLModel):
+    name: str | None = None
+    price: float | None = Field(default=None, gt=0, le=10_000)
+    stock: int | None = Field(default=None, ge=0)
+    category: ProductCategory | None = None
+
+class ProductCreate(SQLModel):
+    __tablename__ = "products"
+
+    id: int | None = Field(default=None, primary_key=True)
     name: str
     price: float = Field(gt=0, le=10_000)
     stock: int = Field(ge=0)
     category: ProductCategory
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
