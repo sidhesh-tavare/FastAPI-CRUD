@@ -1,11 +1,9 @@
-from sqlmodel import SQLModel, create_engine, Session
-from .models import ProductCategory, Product
+from sqlmodel import SQLModel
 from sqlalchemy.ext.asyncio import AsyncSession,create_async_engine,async_sessionmaker
-from sqlalchemy.orm import sessionmaker
-from .models import Product
 from app.config import settings
 from typing import Annotated 
 from fastapi import Depends
+from app.services.product import ProductService
 
 #1 create db engine asynchronously 
 engine = create_async_engine(
@@ -26,3 +24,8 @@ async def get_session():
         yield session
 
 SessionDep = Annotated[AsyncSession,Depends(get_session)]
+
+def get_product_service(session:SessionDep):
+    return ProductService(session)
+
+ServiceDep = Annotated[ProductService,Depends(get_product_service)]

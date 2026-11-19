@@ -6,6 +6,7 @@ from app.routers import products
 
 
 db = Database()
+
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     await create_db_tables()
