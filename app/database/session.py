@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession,create_async_engine,async_sessio
 from app.config import settings
 from typing import Annotated 
 from fastapi import Depends
-from app.services.product import ProductService
+from app.api.services.product import ProductService
 
 #1 create db engine asynchronously 
 engine = create_async_engine(

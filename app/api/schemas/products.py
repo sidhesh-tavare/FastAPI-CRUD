@@ -1,6 +1,5 @@
 import random
 from enum import Enum
-
 from pydantic import BaseModel, Field
 
 
@@ -45,3 +44,4 @@ class ProductUpdate(BaseModel):
     stock: int | None = Field(default=None, ge=0)
     # warehouse: int | None = Field(default=None, ge=1, le=5)
     # status: ProductStatus | None = Field(default=None)
+

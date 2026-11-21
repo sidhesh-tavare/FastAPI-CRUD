@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
 from sqlmodel import Field, SQLModel
+from pydantic import EmailStr
 
 
 class ProductCategory(str, Enum):
@@ -37,4 +38,11 @@ class ProductCreate(SQLModel):
     price: float = Field(gt=0, le=10_000)
     stock: int = Field(ge=0)
     category: ProductCategory
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))  
+    
+class Seller(SQLModel,table=True):
+    __tablename__ = "sellers"
+    id : int = Field(default=None,primary_key=True)
+    name : str = Field(max_length=30)
+    email : EmailStr
+    password_hash : str

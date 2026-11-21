@@ -1,6 +1,6 @@
 import sqlite3
 from typing import Any
-from app.schemas.models import ProductCreate,ProductUpdate,BaseProduct
+from app.api.schemas.products import ProductCreate,ProductUpdate,BaseProduct
 
 class Database:
 
