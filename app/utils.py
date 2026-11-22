@@ -1,15 +1,16 @@
 from datetime import datetime,timezone,timedelta
-
 from fastapi import HTTPException , status , Depends
 from app.config import loginsettings 
+from uuid import uuid4
 
 import jwt
 
-def generate_access_token(data : dict,expiry: timedelta = timedelta(minutes=15)):
+def generate_access_token(data : dict):
     return jwt.encode(
             payload={
                 **data,
-                "exp": datetime.now(timezone.utc)+ expiry
+                "jti" : str(uuid4()),
+                "exp": datetime.now(timezone.utc)
             },
             algorithm = loginsettings.algorithm,
             key = loginsettings.signature

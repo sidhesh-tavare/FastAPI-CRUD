@@ -8,6 +8,7 @@ from app.api.services.product import ProductService
 from app.api.services.sellers import SellerService
 from app.core.security import oauth2_scheme
 from app.utils import decode_access_token
+from app.database.redis_db import check_blacklisted,blacklist_jti
 
 SessionDep = Annotated[AsyncSession,Depends(get_session)]
 
@@ -20,7 +21,7 @@ def get_seller_service(session:SessionDep):
 async def get_access_token(token: Annotated[str,Depends(oauth2_scheme)],)-> dict:
     data = decode_access_token(token)
   
-    if data is None:
+    if data is None or await check_blacklisted(jti = data['jti']):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="invalid access token"

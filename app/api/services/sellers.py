@@ -8,6 +8,8 @@ import jwt
 from datetime import datetime,timezone,timedelta
 from app.config import loginsettings
 from argon2.exceptions import InvalidHashError, VerifyMismatchError
+from app.database.redis_db import redis_db
+from uuid import uuid4
 
 ph = PasswordHasher()
 
@@ -45,9 +47,11 @@ class SellerService():
         token = jwt.encode(
             payload={
                 "user": {
-                    "id" : seller.id
+                    "id" : seller.id,
+                    
                 },
                 "exp": datetime.now(timezone.utc) + timedelta(days=1),
+                "jti" : str(uuid4())
             },
             algorithm=loginsettings.algorithm,
             key=loginsettings.get_signature,
