@@ -1,7 +1,7 @@
 from fastapi import APIRouter ,status,HTTPException
 from app.api.schemas.products import ProductCreate,ProductUpdate
 from app.database.models import ProductUpdate,ProductCreate
-from app.api.dependencies import ProductDep,SellerDep
+from app.api.dependencies import ProductDep,SellerDep,CurrentSellerDep
 from typing import Any
 # from datetime import datetime,timezone
 
@@ -12,7 +12,7 @@ async def health_check():
     return {"message":"working"}
 
 @router.get("/")
-async def get_product(id: int,service:ProductDep):
+async def get_product(id: int,service:ProductDep,seller:CurrentSellerDep):
     product = await service.get_product(id)
     if product is None :
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Given id doesn't exist!")
@@ -20,11 +20,11 @@ async def get_product(id: int,service:ProductDep):
 
 
 @router.post("/")
-async def create_product(data: ProductCreate , service :ProductDep) -> dict[str, Any]:
+async def create_product(data: ProductCreate , service :ProductDep,seller:CurrentSellerDep) -> dict[str, Any]:
     return await service.add_product(data)
 
 @router.patch("/")
-async def update_product(id: int, body: ProductUpdate,service :ProductDep):
+async def update_product(id: int, body: ProductUpdate,service :ProductDep,seller:CurrentSellerDep):
     update_data = body.model_dump(exclude_none=True)
     if update_data is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "No data to update")
@@ -41,7 +41,7 @@ async def update_product(id: int, body: ProductUpdate,service :ProductDep):
 
 
 @router.delete("/")
-async def delete_product(id: int ,service :ProductDep) -> dict[str, Any]:
+async def delete_product(id: int ,service :ProductDep,seller:CurrentSellerDep) -> dict[str, Any]:
     res = await service.delete_product(id)
     if res is None:
         raise HTTPException(

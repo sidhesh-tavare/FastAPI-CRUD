@@ -45,8 +45,7 @@ class SellerService():
         token = jwt.encode(
             payload={
                 "user": {
-                    "name": seller.name,
-                    "email": seller.email,
+                    "id" : seller.id
                 },
                 "exp": datetime.now(timezone.utc) + timedelta(days=1),
             },
@@ -57,16 +56,3 @@ class SellerService():
 
         
         
-token = jwt.encode(
-            payload = {
-                "user" : {
-                    "name" : "Sidhesh",
-                    "email": "sidhesh@gmail.com"
-                 },
-                "exp": datetime.now(timezone.utc)+timedelta(days=1)
-            },
-            algorithm=loginsettings.algorithm,
-            key = loginsettings.get_signature
-        )
-print(token)
-
