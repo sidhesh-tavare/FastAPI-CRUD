@@ -1,6 +1,7 @@
 import random
 from enum import Enum
 from pydantic import BaseModel, Field , EmailStr
+import uuid 
 
 class BaseSeller(BaseModel): 
     name : str = Field(max_length=30)
@@ -13,7 +14,7 @@ class SellerRead(BaseSeller):
     pass
 
 class SellerResponse(BaseSeller):
-    id : int 
+    id : uuid.UUID 
     name : str 
     email : EmailStr
     

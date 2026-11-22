@@ -9,6 +9,7 @@ from app.api.services.sellers import SellerService
 from app.core.security import oauth2_scheme
 from app.utils import decode_access_token
 from app.database.redis_db import check_blacklisted,blacklist_jti
+import uuid
 
 SessionDep = Annotated[AsyncSession,Depends(get_session)]
 
@@ -29,10 +30,18 @@ async def get_access_token(token: Annotated[str,Depends(oauth2_scheme)],)-> dict
     return data
 
 async def get_current_seller(
-        token_data : Annotated[dict,Depends(get_access_token)],
+        token_data: Annotated[dict, Depends(get_access_token)],
         session: SessionDep
 ):
-    return await session.get(Seller,token_data["user"]["id"])
+    try:
+        seller_id = uuid.UUID(str(token_data["user"]["id"]))
+    except (ValueError, KeyError):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid access token")
+
+    seller = await session.get(Seller, seller_id)
+    if seller is None:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "seller not found")
+    return seller
     
 ProductDep = Annotated[ProductService,Depends(get_product_service)]
 SellerDep = Annotated[SellerService,Depends(get_seller_service)]

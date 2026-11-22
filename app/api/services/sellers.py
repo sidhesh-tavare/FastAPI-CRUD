@@ -47,7 +47,7 @@ class SellerService():
         token = jwt.encode(
             payload={
                 "user": {
-                    "id" : seller.id,
+                    "id" : str(seller.id),
                     
                 },
                 "exp": datetime.now(timezone.utc) + timedelta(days=1),
