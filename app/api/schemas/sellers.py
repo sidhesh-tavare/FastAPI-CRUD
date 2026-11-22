@@ -11,4 +11,13 @@ class SellerCreate(BaseSeller):
     
 class SellerRead(BaseSeller):
     pass
+
+class SellerResponse(BaseSeller):
+    id : int 
+    name : str 
+    email : EmailStr
+    
+    class Config:
+        from_attributes =True
+        # Allows reading from ORM/SQLModel objects
     
