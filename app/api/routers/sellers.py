@@ -1,17 +1,18 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends , HTTPException , status
 from redis import Redis,RedisError
-from app.utils import generate_access_token
 from ..schemas.sellers import SellerCreate,SellerResponse
 from app.api.dependencies import SellerDep , get_access_token , decode_access_token
 from app.database.models import Seller
 from fastapi.security import OAuth2PasswordRequestForm
-from app.database.redis_db import check_blacklisted , blacklist_jti
+from app.database.redis_db import blacklist_jti
+from uuid import UUID
+from app.api.services.sellers import SellerService
 
 router = APIRouter(prefix='/sellers',tags=['sellers'])
 
-@router.post("/signup",response_model=SellerResponse)
-async def register_seller(seller:SellerCreate,service:SellerDep)->Seller:
+@router.post("/signup")
+async def register_seller(seller:SellerCreate,service:SellerDep)->SellerResponse:
     return await service.add_seller(seller)
 
 @router.post("/login")
@@ -35,4 +36,14 @@ async def logout_seller(token_data : Annotated[dict,Depends(get_access_token)]):
             detail = "Could not log out right now. Please check again"
         )
     return {"detail" : "LoggedOut Successfully"}
+
+@router.get("/{seller_id}")
+async def get_seller_details(seller_id : UUID,service:SellerDep)->SellerResponse:
+    seller = await service.get_seller_details(seller_id=seller_id)
+    if seller is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Seller not found",
+        )
+    return SellerResponse.model_validate(seller, from_attributes=True)
 

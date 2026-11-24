@@ -1,6 +1,6 @@
 from fastapi import APIRouter ,status,HTTPException
 from app.api.schemas.products import ProductCreate,ProductUpdate
-from app.database.models import ProductUpdate,ProductCreate
+from app.database.models import ProductUpdate,ProductCreate,ProductResponse
 from app.api.dependencies import ProductDep,SellerDep,CurrentSellerDep
 from typing import Any
 import uuid 
@@ -22,9 +22,10 @@ async def get_product(id: uuid.UUID,service:ProductDep,seller:CurrentSellerDep):
 
 
 @router.post("/")
-async def create_product(data: ProductCreate , service :ProductDep,seller:CurrentSellerDep) -> dict[str, Any]:
+async def create_product(data: ProductCreate , service :ProductDep,seller:CurrentSellerDep) -> ProductResponse:
     # product_data = data.model_copy(update={"seller_id" : seller.id})
-    return await service.add_product(data,seller.id)
+    product = await service.add_product(data,seller.id)
+    return ProductResponse.model_validate(product,from_attributes=True)
 
 @router.patch("/")
 async def update_product(id: uuid.UUID, body: ProductUpdate,service :ProductDep,seller:CurrentSellerDep):
@@ -32,7 +33,7 @@ async def update_product(id: uuid.UUID, body: ProductUpdate,service :ProductDep,
     if update_data is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "No data to update")
 
-    product = await service.update_product(id,body)
+    product = await service.update_product(id,body,current_seller_id = seller.id)
     if product:
         return product
 
@@ -51,4 +52,26 @@ async def delete_product(id: uuid.UUID ,service :ProductDep,seller:CurrentSeller
             status_code=status.HTTP_404_NOT_FOUND,detail="Product with given id not found"
         )
     return {"message":f"deleted product id {id}"}
+
+@router.get("/all")
+async def get_all_products(service:ProductDep , seller:CurrentSellerDep)->dict[uuid.UUID, ProductResponse]:
+    products = await service.get_all_products()
+    if products : return {
+        p.id: ProductResponse.model_validate(p, from_attributes=True)
+        for p in products}
+    raise HTTPException(
+        status_code=status.HTTP_204_NO_CONTENT,
+        detail = "No products available to display"
+    )
+
+@router.get("/{seller_id}")  
+async def get_seller_products(service:ProductDep,seller_id : uuid.UUID)-> dict[uuid.UUID,ProductResponse]:
+    products = await service.get_seller_products(seller_id)
+    return {
+        p.id: ProductResponse.model_validate(p, from_attributes=True)
+        for p in products
+    }
+    
+
+    
 

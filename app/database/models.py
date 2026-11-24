@@ -47,7 +47,22 @@ class Seller(SQLModel,table=True):
     __tablename__ = "sellers"
     id : uuid.UUID = Field(default_factory=uuid4,primary_key=True)
     name : str = Field(max_length=30)
-    email : EmailStr
+    email : EmailStr  = Field(unique=True, index=True, max_length=255)
     password_hash : str
     
     listed_products : List[Product] = Relationship(back_populates="seller",sa_relationship_kwargs={"lazy":"selectin"})
+    
+class ProductResponse(SQLModel):
+    id: uuid.UUID
+    name: str
+    price: float
+    stock: int
+    category: ProductCategory
+    created_at: datetime
+    seller_id: uuid.UUID
+    
+class SellerRead(SQLModel):
+    id : uuid.UUID
+    name : str
+    email : EmailStr
+
