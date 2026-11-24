@@ -23,7 +23,8 @@ async def get_product(id: uuid.UUID,service:ProductDep,seller:CurrentSellerDep):
 
 @router.post("/")
 async def create_product(data: ProductCreate , service :ProductDep,seller:CurrentSellerDep) -> dict[str, Any]:
-    return await service.add_product(data)
+    # product_data = data.model_copy(update={"seller_id" : seller.id})
+    return await service.add_product(data,seller.id)
 
 @router.patch("/")
 async def update_product(id: uuid.UUID, body: ProductUpdate,service :ProductDep,seller:CurrentSellerDep):

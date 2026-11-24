@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.models import Product,ProductCreate,ProductUpdate
 from uuid import uuid4 
 import uuid
+from typing import Any 
 
 class ProductService:
 
@@ -11,8 +12,8 @@ class ProductService:
     async def get_product(self,id:uuid.UUID)->Product|None:
         return await self.session.get(Product,id)
 
-    async def add_product(self,data : ProductCreate)->Product:
-        new_product = Product.model_validate(data)
+    async def add_product(self,data : ProductCreate,seller_id : uuid.UUID)->dict[str,Any]:
+        new_product = Product(**data.model_dump(),seller_id= seller_id)
         self.session.add(new_product)
         await self.session.commit()
         await self.session.refresh(new_product)

@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
 from enum import Enum
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 from pydantic import EmailStr
 import uuid 
 from uuid import uuid4
+from typing import List 
 
 
 class ProductCategory(str, Enum):
@@ -24,6 +25,10 @@ class Product(SQLModel, table=True):
     stock: int = Field(ge=0)
     category: ProductCategory
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    seller_id : uuid.UUID = Field(foreign_key="sellers.id")
+    
+    seller : "Seller" = Relationship(back_populates="listed_products",sa_relationship_kwargs={"lazy":"selectin"})
+    # sa_relationship_kwargs={"lazy":"selectin"}) only load when query not when server starts
 
 class ProductUpdate(SQLModel):
     name: str | None = None
@@ -44,3 +49,5 @@ class Seller(SQLModel,table=True):
     name : str = Field(max_length=30)
     email : EmailStr
     password_hash : str
+    
+    listed_products : List[Product] = Relationship(back_populates="seller",sa_relationship_kwargs={"lazy":"selectin"})

@@ -34,7 +34,7 @@ async def get_current_seller(
         session: SessionDep
 ):
     try:
-        seller_id = uuid.UUID(str(token_data["user"]["id"]))
+        seller_id = uuid.UUID(str(token_data["user"]["id"])) # here convertting from string to uuid 
     except (ValueError, KeyError):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid access token")
 
