@@ -25,7 +25,7 @@ class Product(SQLModel, table=True):
     stock: int = Field(ge=0)
     category: ProductCategory
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    seller_id : uuid.UUID = Field(foreign_key="sellers.id")
+    seller_id : uuid.UUID = Field(foreign_key="sellers.id", ondelete="CASCADE")
     
     seller : "Seller" = Relationship(back_populates="listed_products",sa_relationship_kwargs={"lazy":"selectin"})
     # sa_relationship_kwargs={"lazy":"selectin"}) only load when query not when server starts
@@ -50,7 +50,8 @@ class Seller(SQLModel,table=True):
     email : EmailStr  = Field(unique=True, index=True, max_length=255)
     password_hash : str
     
-    listed_products : List[Product] = Relationship(back_populates="seller",sa_relationship_kwargs={"lazy":"selectin"})
+    listed_products: List["Product"] = Relationship(back_populates="seller",cascade_delete=True,passive_deletes=True,sa_relationship_kwargs={"lazy": "selectin"},
+    )
     
 class ProductResponse(SQLModel):
     id: uuid.UUID
